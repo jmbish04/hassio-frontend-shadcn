@@ -8,7 +8,7 @@ const Chat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const generateId = () => {
-    return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    return crypto.randomUUID();
   };
 
   const sendMessage = useCallback(async (content: string) => {
