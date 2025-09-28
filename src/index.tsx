@@ -65,7 +65,7 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
 	// Handle chat completion endpoint
 	if (url.pathname === '/api/chat/completions' && request.method === 'POST') {
 		try {
-			const body = await request.json() as any;
+			const body = await request.json<{ messages: { role: string, content: string }[] }>();
 			const messages = body.messages || [];
 			
 			// Use Cloudflare AI for chat completions
