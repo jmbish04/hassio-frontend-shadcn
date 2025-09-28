@@ -44,7 +44,7 @@ export default {
 		
 		// Serve the React app for all other routes
 		try {
-			const appHTML = renderToString(<App />);
+			const appHTML = renderToString(<App path={url.pathname} />);
 			const responseHTML = html.replace('__SSR_CONTENT__', appHTML);
 			
 			return new Response(responseHTML, {
