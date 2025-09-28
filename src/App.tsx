@@ -4,16 +4,20 @@ import Home from './pages/Home';
 import Chat from './pages/Chat';
 
 // Simple router state (in a real app, you'd use React Router)
-const getCurrentPage = () => {
-  if (typeof window !== 'undefined') {
-    const path = window.location.pathname;
+const getCurrentPage = (path?: string) => {
+  if (path) {
     if (path === '/chat') return 'chat';
+    return 'home';
+  }
+  if (typeof window !== 'undefined') {
+    const windowPath = window.location.pathname;
+    if (windowPath === '/chat') return 'chat';
   }
   return 'home';
 };
 
-const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = React.useState(getCurrentPage());
+const App: React.FC<{ path?: string }> = ({ path }) => {
+  const [currentPage, setCurrentPage] = React.useState(getCurrentPage(path));
 
   const handleNavigation = (page: string) => {
     setCurrentPage(page);
