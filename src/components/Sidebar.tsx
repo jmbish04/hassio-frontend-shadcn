@@ -20,8 +20,9 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => {
       
       <nav className="p-3 flex-1">
         {menuItems.map((item) => (
-          <button
+          <a
             key={item.id}
+            href={item.id === 'home' ? '/' : `/${item.id}`}
             className={cn(
               "flex items-center w-full p-3 mb-1 rounded-lg text-sm font-medium transition-colors",
               "hover:bg-accent hover:text-accent-foreground",
@@ -29,11 +30,10 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => {
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground"
             )}
-            onClick={() => onNavigate(item.id)}
           >
             <span className="mr-3 text-base">{item.icon}</span>
             <span>{item.label}</span>
-          </button>
+          </a>
         ))}
       </nav>
     </aside>
