@@ -32,39 +32,16 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="app">
-      <div className="app-container">
+    <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen">
         <Sidebar 
           currentPage={currentPage}
           onNavigate={handleNavigation}
         />
-        <main className="main-content">
+        <main className="flex-1 p-6 overflow-y-auto md:p-8">
           {renderCurrentPage()}
         </main>
       </div>
-      <style>{`
-        .app {
-          min-height: 100vh;
-          background: #f8fafc;
-        }
-        
-        .app-container {
-          display: flex;
-          min-height: 100vh;
-        }
-        
-        .main-content {
-          flex: 1;
-          padding: 24px;
-          overflow-y: auto;
-        }
-        
-        @media (max-width: 768px) {
-          .main-content {
-            padding: 16px;
-          }
-        }
-      `}</style>
     </div>
   );
 };

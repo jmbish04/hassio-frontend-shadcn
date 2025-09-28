@@ -9,23 +9,9 @@ const html = `<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hassio Frontend</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f8fafc;
-    }
-    
-    #root {
-      min-height: 100vh;
-    }
-  </style>
+  <link rel="stylesheet" href="/globals.css" />
 </head>
-<body>
+<body class="bg-background text-foreground">
   <div id="root">__SSR_CONTENT__</div>
   <script>
     // Client-side hydration would go here in a full implementation
@@ -37,6 +23,19 @@ const html = `<!DOCTYPE html>
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		const url = new URL(request.url);
+		
+		// Serve static assets
+		if (url.pathname === '/globals.css') {
+			try {
+				const cssContent = await env.ASSETS.fetch(request);
+				return cssContent;
+			} catch (error) {
+				// Fallback CSS if assets are not available
+				return new Response(css, {
+					headers: { 'content-type': 'text/css' },
+				});
+			}
+		}
 		
 		// Handle API routes for chatbot
 		if (url.pathname.startsWith('/api/')) {
@@ -90,3 +89,11 @@ async function handleApi(request: Request, env: Env): Promise<Response> {
 	
 	return new Response('Not Found', { status: 404 });
 }
+
+// Fallback CSS for development
+const css = `
+/* Basic Tailwind-like reset */
+*, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb; }
+html { line-height: 1.5; -webkit-text-size-adjust: 100%; tab-size: 4; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif; }
+body { margin: 0; line-height: inherit; }
+`;

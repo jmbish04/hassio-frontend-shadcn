@@ -1,13 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import MessageList from '../components/ui/message-list';
+import ChatMessage, { Message } from '../components/ui/chat-message';
 import MessageInput from '../components/ui/message-input';
-
-interface Message {
-  id: string;
-  content: string;
-  role: 'user' | 'assistant';
-  timestamp: Date;
-}
+import { Button } from '../components/ui/button';
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -74,107 +68,60 @@ const Chat: React.FC = () => {
   };
 
   return (
-    <div className="chat-page">
-      <div className="chat-header">
-        <div className="header-content">
-          <h1>AI Chat Assistant</h1>
-          <p>Powered by Cloudflare Workers AI</p>
+    <div className="h-[calc(100vh-3rem)] flex flex-col max-w-6xl mx-auto">
+      <div className="flex justify-between items-center py-6 border-b border-border mb-0">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-1">AI Chat Assistant</h1>
+          <p className="text-muted-foreground">Powered by Cloudflare Workers AI</p>
         </div>
         {messages.length > 0 && (
-          <button onClick={clearChat} className="clear-button">
+          <Button variant="outline" onClick={clearChat}>
             Clear Chat
-          </button>
+          </Button>
         )}
       </div>
       
-      <div className="chat-container">
-        <MessageList messages={messages} isLoading={isLoading} />
+      <div className="flex-1 bg-card border border-border rounded-2xl shadow-sm flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
+          {messages.length === 0 ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
+              <div className="text-6xl mb-4">💬</div>
+              <h3 className="text-2xl font-semibold text-foreground mb-2">Start a conversation</h3>
+              <p className="text-muted-foreground">Send a message to begin chatting with the AI assistant.</p>
+            </div>
+          ) : (
+            <div className="space-y-0">
+              {messages.map((message) => (
+                <div key={message.id} className="group">
+                  <ChatMessage message={message} />
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex gap-3 p-4">
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm">
+                    🤖
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <div className="inline-block bg-muted rounded-lg px-3 py-2">
+                      <div className="flex gap-1">
+                        <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        
         <MessageInput 
           onSendMessage={sendMessage} 
           disabled={isLoading}
           placeholder="Ask me anything..."
         />
       </div>
-      
-      <style>{`
-        .chat-page {
-          height: calc(100vh - 48px);
-          display: flex;
-          flex-direction: column;
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-        
-        .chat-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 24px 0 16px 0;
-          border-bottom: 1px solid #e2e8f0;
-          margin-bottom: 0;
-        }
-        
-        .header-content h1 {
-          margin: 0 0 4px 0;
-          font-size: 32px;
-          font-weight: 700;
-          color: #1e293b;
-        }
-        
-        .header-content p {
-          margin: 0;
-          color: #64748b;
-          font-size: 16px;
-        }
-        
-        .clear-button {
-          padding: 8px 16px;
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          color: #64748b;
-          cursor: pointer;
-          font-size: 14px;
-          transition: all 0.2s ease;
-        }
-        
-        .clear-button:hover {
-          background: #f1f5f9;
-          color: #475569;
-        }
-        
-        .chat-container {
-          flex: 1;
-          background: white;
-          border-radius: 16px;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-        }
-        
-        @media (max-width: 768px) {
-          .chat-page {
-            height: calc(100vh - 32px);
-          }
-          
-          .chat-header {
-            padding: 16px 0 12px 0;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px;
-          }
-          
-          .header-content h1 {
-            font-size: 28px;
-          }
-          
-          .header-content p {
-            font-size: 14px;
-          }
-        }
-      `}</style>
     </div>
   );
 };
